@@ -319,14 +319,10 @@ input,select,textarea{font-family:inherit;font-weight:inherit;-webkit-user-selec
   .item-btn{min-height:64px;}
 }
 
-/* =====================================================================
-   PRINT STYLES — معززة ومقاومة للأخطاء
-   ===================================================================== */
+/* ====== PRINT STYLES ====== */
 @media print {
   @page { size: 80mm auto; margin: 2mm; }
-
-  /* إعادة تهيئة الجذر بشكل صارم */
-  html {
+  html, body {
     position: static !important;
     inset: auto !important;
     overflow: visible !important;
@@ -335,72 +331,44 @@ input,select,textarea{font-family:inherit;font-weight:inherit;-webkit-user-selec
     min-height: 0 !important;
     background: #fff !important;
     color: #000 !important;
-  }
-  body {
-    position: static !important;
-    inset: auto !important;
-    overflow: visible !important;
-    height: auto !important;
-    width: auto !important;
-    min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: #fff !important;
-    color: #000 !important;
-    display: block !important;
-    -webkit-user-select: auto !important;
-    user-select: auto !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-
-  /* أخفِ كل شيء عدا الفاتورة */
   body > *:not(#receiptPrint){ display: none !important; }
-
-  /* الفاتورة */
   #receiptPrint {
     display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: static !important;
-    width: 74mm !important;
-    max-width: 74mm !important;
-    padding: 2mm 1mm !important;
-    margin: 0 !important;
-    background: #fff !important;
-    color: #000 !important;
-    font-family: 'Cairo','Segoe UI',Tahoma,sans-serif !important;
-    font-size: 11px !important;
-    line-height: 1.3 !important;
-    direction: rtl !important;
+    width: 74mm;
+    padding: 2mm 1mm;
+    font-family: 'Cairo','Segoe UI',Tahoma,sans-serif;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #000;
+    background: #fff;
+    direction: rtl;
   }
-  #receiptPrint *{
-    color:#000 !important;
-    visibility:visible !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  #receiptPrint .receipt{ width:100% !important; }
-  #receiptPrint .r-store{ text-align:center !important; font-weight:900 !important; font-size:17px !important; margin-bottom:1px !important; }
-  #receiptPrint .r-storeinfo{ text-align:center !important; font-size:9px !important; color:#333 !important; }
-  #receiptPrint .r-brand{ margin-top:5px !important; padding-top:4px !important; border-top:1px dashed #999 !important; text-align:left !important; font-size:8.5px !important; color:#333 !important; }
-  #receiptPrint .r-brand-line1{ font-weight:800 !important; }
-  #receiptPrint .r-brand-line2{ display:flex !important; gap:6px !important; align-items:center !important; }
-  #receiptPrint .r-ig{ display:inline-flex !important; align-items:center !important; gap:2px !important; }
-  #receiptPrint .r-sep{ border-top:1px dashed #000 !important; margin:5px 0 !important; }
-  #receiptPrint .r-meta-line{ font-size:10px !important; display:flex !important; justify-content:space-between !important; }
-  #receiptPrint .r-meta-line b{ font-size:12px !important; }
-  #receiptPrint .r-table{ width:100% !important; border-collapse:collapse !important; font-size:10px !important; }
-  #receiptPrint .r-table th{ border-bottom:1px solid #000 !important; padding:2px 1px !important; font-weight:800 !important; font-size:9px !important; text-align:right !important; }
-  #receiptPrint .r-table td{ padding:2px 1px !important; vertical-align:top !important; }
-  #receiptPrint .r-table .rn{ text-align:right !important; }
-  #receiptPrint .r-table .rq{ text-align:center !important; width:14mm !important; }
-  #receiptPrint .r-table .rp{ text-align:left !important; width:18mm !important; font-weight:700 !important; }
-  #receiptPrint .r-total{ display:flex !important; justify-content:space-between !important; align-items:center !important; font-size:13px !important; font-weight:900 !important; padding:3px 0 !important; }
-  #receiptPrint .r-total b{ font-size:15px !important; }
-  #receiptPrint .r-footer{ display:flex !important; justify-content:flex-end !important; font-size:9.5px !important; line-height:1.5 !important; }
-  #receiptPrint .r-footer-right{ text-align:right !important; }
-  #receiptPrint .r-thanks{ text-align:center !important; margin-top:6px !important; font-size:9px !important; font-weight:700 !important; }
+  #receiptPrint .receipt{ width:100%; }
+  #receiptPrint .r-store{ text-align:center; font-weight:900; font-size:17px; margin-bottom:1px; }
+  #receiptPrint .r-storeinfo{ text-align:center; font-size:9px; color:#333; }
+  #receiptPrint .r-brand{ margin-top:5px; padding-top:4px; border-top:1px dashed #999; text-align:left; font-size:8.5px; color:#333; }
+  #receiptPrint .r-brand-line1{ font-weight:800; }
+  #receiptPrint .r-brand-line2{ display:flex; gap:6px; align-items:center; }
+  #receiptPrint .r-ig{ display:inline-flex; align-items:center; gap:2px; }
+  #receiptPrint .r-sep{ border-top:1px dashed #000; margin:5px 0; }
+  #receiptPrint .r-meta-line{ font-size:10px; display:flex; justify-content:space-between; }
+  #receiptPrint .r-meta-line b{ font-size:12px; }
+  #receiptPrint .r-table{ width:100%; border-collapse:collapse; font-size:10px; }
+  #receiptPrint .r-table th{ border-bottom:1px solid #000; padding:2px 1px; font-weight:800; font-size:9px; text-align:right; }
+  #receiptPrint .r-table td{ padding:2px 1px; vertical-align:top; }
+  #receiptPrint .r-table .rn{ text-align:right; }
+  #receiptPrint .r-table .rq{ text-align:center; width:14mm; }
+  #receiptPrint .r-table .rp{ text-align:left; width:18mm; font-weight:700; }
+  #receiptPrint .r-total{ display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:900; padding:3px 0; }
+  #receiptPrint .r-total b{ font-size:15px; }
+  #receiptPrint .r-footer{ display:flex; justify-content:flex-end; font-size:9.5px; line-height:1.5; }
+  #receiptPrint .r-footer-right{ text-align:right; }
+  #receiptPrint .r-thanks{ text-align:center; margin-top:6px; font-size:9px; font-weight:700; }
 }
 </style>
 </head>
@@ -575,15 +543,13 @@ input,select,textarea{font-family:inherit;font-weight:inherit;-webkit-user-selec
 
 <div id="modalOverlay" class="modal-overlay"><div id="modalBox" class="modal-box"></div></div>
 <div id="toast"></div>
-
-<!-- ===== حاوية الطباعة - يجب أن تكون خارج #app وأخير عنصر في body ===== -->
 <div id="receiptPrint"></div>
 
 <script>
 (function(){
 'use strict';
 
-/* ===== FIXED DEVELOPER INFO ===== */
+/* ===== FIXED DEVELOPER INFO (NON-EDITABLE) ===== */
 const DEV = {
   name: 'المهندس ازهر',
   phone: '07711216216',
@@ -931,7 +897,11 @@ function getCurrentReceiptNumber(){
   return state.receipts.length + 1;
 }
 
-/* ===== GLOBAL GESTURE LOCK ===== */
+/* ================ GLOBAL GESTURE LOCK ================
+   Prevents the same finger's pointerup from triggering
+   a tap on ANOTHER chip right after a long-press deletion.
+   Once long press fires, ALL pointer interactions on chips/items
+   are ignored for this pointer until it lifts. */
 let blockedPointerId = null;
 let blockedSafetyTimer = null;
 
@@ -945,6 +915,7 @@ function blockPointer(id){
 }
 function unlockPointer(id){
   if(blockedPointerId === id){
+    // delay so the current event loop finishes
     setTimeout(() => {
       if(blockedPointerId === id) blockedPointerId = null;
       if(blockedSafetyTimer){ clearTimeout(blockedSafetyTimer); blockedSafetyTimer = null; }
@@ -952,7 +923,10 @@ function unlockPointer(id){
   }
 }
 
-document.addEventListener('pointerup', e => { unlockPointer(e.pointerId); }, true);
+// Capture phase: fires BEFORE any chip's pointerup handler
+document.addEventListener('pointerup', e => {
+  unlockPointer(e.pointerId);
+}, true);
 document.addEventListener('pointercancel', e => {
   if(blockedPointerId === e.pointerId){
     blockedPointerId = null;
@@ -995,26 +969,36 @@ function renderPreview(){
   });
 }
 
+/* ====== CHIP INTERACTION — LONG PRESS DELETES ONE CHIP ONLY ====== */
 function attachChipEvents(el, id){
   let timer = null, longFired = false, sx = 0, sy = 0, moved = false;
   let chipPointerId = null;
+
   const cancel = () => { if(timer){ clearTimeout(timer); timer = null; } };
 
   el.addEventListener('pointerdown', e => {
     if(e.button !== undefined && e.button !== 0) return;
+    // If this pointer is currently blocked, ignore
     if(blockedPointerId !== null && blockedPointerId === e.pointerId) return;
+
     chipPointerId = e.pointerId;
     sx = e.clientX; sy = e.clientY; moved = false; longFired = false;
     cancel();
+
     timer = setTimeout(() => {
       longFired = true; timer = null;
+      // *** Block the pointer so no other chip can be affected on pointerup ***
       blockPointer(e.pointerId);
+      // Delete entire quantity of THIS chip
       setQty(id, 0);
       saveState();
-      renderPreview(); renderTotal(); renderItemsGrid();
+      renderPreview();
+      renderTotal();
+      renderItemsGrid();
       if(navigator.vibrate) navigator.vibrate(30);
     }, 500);
   });
+
   el.addEventListener('pointermove', e => {
     if(e.pointerId !== chipPointerId) return;
     if(moved) return;
@@ -1022,18 +1006,29 @@ function attachChipEvents(el, id){
       moved = true; cancel();
     }
   });
+
   el.addEventListener('pointerup', e => {
     if(e.pointerId !== chipPointerId) return;
     const wasLong = longFired, wasMoved = moved;
     cancel(); longFired = false; moved = false;
+
+    // If we were long-pressed, do NOT trigger tap. Block handled by global.
     if(wasLong || wasMoved) return;
+    // If some OTHER chip long-pressed this pointer, block tap
     if(blockedPointerId === e.pointerId) return;
+
+    // Single tap: remove 1
     const cur = getQty(id);
     setQty(id, Math.max(0, cur - 1));
     saveState();
-    renderPreview(); renderTotal(); renderItemsGrid();
+    renderPreview();
+    renderTotal();
+    renderItemsGrid();
   });
-  el.addEventListener('pointercancel', () => { cancel(); longFired = false; moved = true; });
+
+  el.addEventListener('pointercancel', () => {
+    cancel(); longFired = false; moved = true;
+  });
   el.addEventListener('pointerleave', () => { cancel(); });
   el.addEventListener('contextmenu', e => e.preventDefault());
 }
@@ -1299,59 +1294,38 @@ function printReceipt(r){
   printRawHTML(html);
 }
 
-/* ==========================================================
-   دالة الطباعة الموحدة - لا تمسح المحتوى إطلاقاً
-   ========================================================== */
+/* ====== PRINT FUNCTION (works in browser & Android WebView) ====== */
 function printRawHTML(innerHtml){
   const printDiv = document.getElementById('receiptPrint');
-  if(!printDiv){
-    console.error('receiptPrint container not found');
-    toast('خطأ في الطباعة','error');
-    return;
-  }
-
-  // ضع المحتوى (يُستبدل تلقائياً عند كل طبعة جديدة)
   printDiv.innerHTML = innerHtml;
 
-  // ⚠️ لا نمسح المحتوى أبداً — يبقى حتى الطبعة التالية
-  // حاوية #receiptPrint مخفية على الشاشة بـ display:none
-
   const runPrint = () => {
-    // تأخير صغير لضمان اكتمال paint + تحميل خط Cairo
     setTimeout(() => {
       let printed = false;
-
-      // 1) الطريقة القياسية - تعمل في Chrome/Edge/Android WebView/Safari
+      // 1) Standard window.print (works in Chrome, Android WebView, Safari)
       if(typeof window.print === 'function'){
         try { window.print(); printed = true; }
         catch(e){ console.warn('window.print failed:', e); }
       }
-
-      // 2) Native Android bridge (إذا كان التطبيق يوفرها)
+      // 2) Native Android bridge (if WebView provides one)
       if(!printed && window.Android && typeof window.Android.printPage === 'function'){
         try { window.Android.printPage(); printed = true; }
-        catch(e){ console.warn('Android bridge failed:', e); }
+        catch(e){ console.warn('Android.printPage failed:', e); }
       }
-
       // 3) iOS WKWebView message handler
       if(!printed && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.print){
         try { window.webkit.messageHandlers.print.postMessage({}); printed = true; }
         catch(e){ console.warn('iOS bridge failed:', e); }
       }
-
-      // 4) Capacitor Printer plugin
-      if(!printed && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Printer){
-        try {
-          window.Capacitor.Plugins.Printer.print({ content: innerHtml });
-          printed = true;
-        } catch(e){ console.warn('Capacitor Printer failed:', e); }
+      if(!printed){
+        toast('الطباعة غير مدعومة على هذا الجهاز','error');
       }
-
-      if(!printed) toast('الطباعة غير مدعومة على هذا الجهاز','error');
-    }, 250);
+      // Clean up after printing
+      setTimeout(() => { printDiv.innerHTML = ''; }, 1500);
+    }, 180);
   };
 
-  // انتظر تحميل خط Cairo قبل الطباعة
+  // Wait for fonts so Cairo renders properly
   if (document.fonts && document.fonts.ready){
     document.fonts.ready.then(runPrint).catch(runPrint);
   } else {
@@ -1742,6 +1716,7 @@ function openItemForm(item){
   `, box => {
     let tempImg = item && item.img ? item.img : null;
     const wrap = box.querySelector('#fiImgWrap');
+
     const rebindImg = () => {
       const fileInput = wrap.querySelector('#fiImg');
       if(!fileInput) return;
@@ -1854,6 +1829,7 @@ function renderSettings(){
     </div>
   `;
 
+  const logoWrap = grid.querySelector('#storeLogoWrap');
   const logoFile = grid.querySelector('#storeLogoFile');
   logoFile.onchange = ev => {
     const file = ev.target.files[0];
@@ -1861,7 +1837,9 @@ function renderSettings(){
     resizeImage(file, 300, dataUrl => {
       if(!dataUrl){ toast('فشل','error'); return; }
       state.store.logo = dataUrl;
-      saveState(); renderSettings(); updateTopbar();
+      saveState();
+      renderSettings();
+      updateTopbar();
       toast('تم تحديث الشعار','success');
     });
   };
@@ -1869,7 +1847,9 @@ function renderSettings(){
   if(logoClear) logoClear.onclick = e2 => {
     e2.stopPropagation();
     state.store.logo = null;
-    saveState(); renderSettings(); updateTopbar();
+    saveState();
+    renderSettings();
+    updateTopbar();
     toast('تم إزالة الشعار','success');
   };
 
