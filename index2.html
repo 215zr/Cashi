@@ -751,7 +751,7 @@ function defaultState(){
     expenses:[],
     expenseCategories:['مواد أولية','صيانة','فواتير','أخرى'],
     currentReceipt:{number:1, items:[], isEditing:false, editIndex:null},
-    settings:{ footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50 },
+    settings:{ footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50, printMethod:'bluetooth', printerCount:1, fontSize:'medium' },
     selection:{active:false, itemId:null, input:'', baseQty:0}
   };
 }
@@ -775,9 +775,12 @@ function loadState(){
     if(!state.currentReceipt) state.currentReceipt = {number:1,items:[],isEditing:false,editIndex:null};
     if(!Array.isArray(state.currentReceipt.items)) state.currentReceipt.items = [];
     if(!state.selection) state.selection = {active:false,itemId:null,input:'',baseQty:0};
-    if(!state.settings) state.settings = { footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50 };
+    if(!state.settings) state.settings = { footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50, printMethod:'bluetooth', printerCount:1, fontSize:'medium' };
     if(state.settings.simplifiedPrint === undefined) state.settings.simplifiedPrint = false;
     if(!state.settings.paperWidth) state.settings.paperWidth = 50;
+    if(!state.settings.printMethod) state.settings.printMethod = 'bluetooth';
+    if(!state.settings.printerCount) state.settings.printerCount = 1;
+    if(!state.settings.fontSize) state.settings.fontSize = 'medium';
     if(!state.store) state.store = def.store;
     if(!state.store.logo) state.store.logo = null;
     state.employees.forEach(e => { if(e.img === undefined) e.img = null; });
@@ -1395,49 +1398,51 @@ function waitForFonts(){
 
 function buildFullHTMLForNative(innerHtml, isSimplified){
   const width = (state.settings && state.settings.paperWidth) || 50;
+  const fontSize = state.settings.fontSize || 'medium';
+  const scale = fontSize === 'small' ? 0.85 : fontSize === 'large' ? 1.2 : 1.0;
+  
   return '<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><style>' +
     '@page{size:'+width+'mm auto;margin:1.5mm;}' +
     '*{box-sizing:border-box;}' +
     'body{font-family:Cairo,"Segoe UI",Tahoma,sans-serif;margin:0;padding:0;color:#000;background:#fff;direction:rtl;}' +
-    '.receipt{width:'+(width-3)+'mm;padding:1mm 0;font-size:9px;line-height:1.2;}' +
-    '.r-store{text-align:center;font-weight:900;font-size:14px;}' +
-    '.r-storeinfo{text-align:center;font-size:8px;color:#333;}' +
-    '.r-brand{margin-top:4px;padding-top:3px;border-top:1px dashed #999;text-align:left;font-size:7.5px;color:#333;}' +
+    '.receipt{width:'+(width-3)+'mm;padding:1mm 0;font-size:'+(9*scale)+'px;line-height:1.2;}' +
+    '.r-store{text-align:center;font-weight:900;font-size:'+(14*scale)+'px;}' +
+    '.r-storeinfo{text-align:center;font-size:'+(8*scale)+'px;color:#333;}' +
+    '.r-brand{margin-top:4px;padding-top:3px;border-top:1px dashed #999;text-align:left;font-size:'+(7.5*scale)+'px;color:#333;}' +
     '.r-brand-line1{font-weight:800;}' +
     '.r-brand-line2{display:flex;gap:4px;align-items:center;}' +
-    '.r-sep{border-top:1px dashed #000;margin:4px 0;}' +
-    '.r-table{width:100%;border-collapse:collapse;font-size:8.5px;}' +
-    '.r-table th{border-bottom:1px solid #000;padding:2px 0;font-weight:800;font-size:8px;text-align:right;}' +
+    '.r-sep{border-top:1px dashed #000;margin:'+(4*scale)+'px 0;}' +
+    '.r-table{width:100%;border-collapse:collapse;font-size:'+(8.5*scale)+'px;}' +
+    '.r-table th{border-bottom:1px solid #000;padding:2px 0;font-weight:800;font-size:'+(8*scale)+'px;text-align:right;}' +
     '.r-table td{padding:2px 0;vertical-align:top;}' +
     '.r-table .rn{text-align:right;word-break:break-word;}' +
-    '.r-table .runit{text-align:center;width:10mm;}' +
-    '.r-table .rq{text-align:center;width:8mm;}' +
-    '.r-table .rp{text-align:left;width:12mm;font-weight:700;}' +
-    '.r-total{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:900;padding:2px 0;}' +
-    '.r-total b{font-size:12px;}' +
-    '.r-footer{display:flex;justify-content:flex-end;font-size:8.5px;line-height:1.4;}' +
-    '.r-thanks{text-align:center;margin-top:4px;font-size:8px;font-weight:700;}' +
+    '.r-table .runit{text-align:center;width:'+(10*scale)+'mm;}' +
+    '.r-table .rq{text-align:center;width:'+(8*scale)+'mm;}' +
+    '.r-table .rp{text-align:left;width:'+(12*scale)+'mm;font-weight:700;}' +
+    '.r-total{display:flex;justify-content:space-between;align-items:center;font-size:'+(11*scale)+'px;font-weight:900;padding:2px 0;}' +
+    '.r-total b{font-size:'+(12*scale)+'px;}' +
+    '.r-footer{display:flex;justify-content:flex-end;font-size:'+(8.5*scale)+'px;line-height:1.4;}' +
+    '.r-thanks{text-align:center;margin-top:4px;font-size:'+(8*scale)+'px;font-weight:700;}' +
     '.rn-boxes{display:inline-flex;gap:2px;direction:ltr;align-items:center;justify-content:center;}' +
-    '.rn-box{min-width:16px;height:20px;padding:0 1px;border:2px solid #000;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;background:#fff;color:#000;}' +
+    '.rn-box{min-width:'+(16*scale)+'px;height:'+(20*scale)+'px;padding:0 1px;border:2px solid #000;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:'+(13*scale)+'px;font-weight:900;background:#fff;color:#000;}' +
     '.rn-box.empty{border-style:dashed;border-color:#888;background:#f5f5f5;}' +
     '.rn-boxes.lg{display:flex;width:100%;gap:2mm;margin:1mm 0;}' +
-    '.rn-boxes.lg .rn-box{flex:1;min-width:0;height:28px;font-size:16px;border-width:2px;}' +
+    '.rn-boxes.lg .rn-box{flex:1;min-width:0;height:'+(28*scale)+'px;font-size:'+(16*scale)+'px;border-width:2px;}' +
     '.r-header-flex{display:flex;align-items:center;justify-content:space-between;gap:3px;margin-bottom:2px;}' +
-    '.r-header-flex .r-store{text-align:right;font-size:12px;flex:1;overflow:hidden;white-space:nowrap;font-weight:900;}' +
+    '.r-header-flex .r-store{text-align:right;font-size:'+(12*scale)+'px;flex:1;overflow:hidden;white-space:nowrap;font-weight:900;}' +
     '.simp-header{text-align:center;padding:1mm 0;}' +
     '.simp-items-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5mm;margin:1.5mm 0;}' +
-    '.simp-item{border:1px solid #000;border-radius:3px;padding:1.5mm 0.5mm;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:18mm;gap:0.5mm;}' +
-    '.simp-item .unit{font-size:11px;font-weight:900;line-height:1;}' +
-    '.simp-item .item-name{font-size:9px;font-weight:900;line-height:1.1;padding:0.5mm 1mm;border:1px solid #000;border-radius:10px;background:#f5f5f5;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
-    '.simp-item .qty-total{font-size:9px;font-weight:800;line-height:1;display:flex;align-items:center;gap:1px;}' +
-    '.simp-item .qty-num{font-size:13px;font-weight:900;}' +
-    '.simp-item .total-num{font-size:11px;font-weight:900;}' +
-    '.simp-total{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:900;padding:1.5mm 0;border-top:2px solid #000;}' +
-    '.simp-dev{font-size:6.5px;color:#444;text-align:center;font-weight:400;font-family:"Courier New",monospace;}' +
+    '.simp-item{border:1px solid #000;border-radius:3px;padding:1.5mm 0.5mm;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:'+(18*scale)+'mm;gap:0.5mm;}' +
+    '.simp-item .unit{font-size:'+(11*scale)+'px;font-weight:900;line-height:1;}' +
+    '.simp-item .item-name{font-size:'+(9*scale)+'px;font-weight:900;line-height:1.1;padding:0.5mm 1mm;border:1px solid #000;border-radius:10px;background:#f5f5f5;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}' +
+    '.simp-item .qty-total{font-size:'+(9*scale)+'px;font-weight:800;line-height:1;display:flex;align-items:center;gap:1px;}' +
+    '.simp-item .qty-num{font-size:'+(13*scale)+'px;font-weight:900;}' +
+    '.simp-item .total-num{font-size:'+(11*scale)+'px;font-weight:900;}' +
+    '.simp-total{display:flex;justify-content:space-between;align-items:center;font-size:'+(13*scale)+'px;font-weight:900;padding:1.5mm 0;border-top:2px solid #000;}' +
+    '.simp-dev{font-size:'+(6.5*scale)+'px;color:#444;text-align:center;font-weight:400;font-family:"Courier New",monospace;}' +
     '</style></head><body>' + innerHtml + '</body></html>';
 }
 
-// دالة لترميز النصوص العربية إلى Base64 لتطبيق RawBT
 function b64EncodeUnicode(str) {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
     return String.fromCharCode('0x' + p1);
@@ -1467,43 +1472,35 @@ async function printRawHTML(innerHtml, forceDialog){
     try { window.Android.printPage(fullHtml); printed = true; }
     catch(e){ console.warn('Android:', e); }
   }
-  if(!printed && window.cordova && window.cordova.plugins && window.cordova.plugins.printer){
-    try { await new Promise((res, rej) => window.cordova.plugins.printer.print(fullHtml, res, rej)); printed = true; }
-    catch(e){ console.warn('Cordova:', e); }
-  }
-  if(!printed && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.print){
-    try { window.webkit.messageHandlers.print.postMessage({content: fullHtml}); printed = true; }
-    catch(e){ console.warn('iOS:', e); }
-  }
 
-  // محاولة الطباعة الصامتة عبر RawBT
   if(!printed && /Android/i.test(navigator.userAgent)){
     try {
       const base64Html = b64EncodeUnicode(fullHtml);
+      const intentUrl = 'intent:data:text/html;charset=utf-8;base64,' + base64Html + '#Intent;scheme=data;package=ru.a402d.rawbtprinter;end;';
       
-      // الطريقة 1: عبر رابط rawbt المباشر (الأنسب لتطبيق HTML Creator)
-      window.location.href = 'rawbt:base64,' + base64Html;
+      // إرسال الأمر لعدد الطابعات المحدد
+      const count = state.settings.printerCount || 1;
+      
+      for(let i=0; i<count; i++){
+         if(i === 0) {
+           window.location.href = intentUrl;
+         } else {
+           setTimeout(() => { window.location.href = intentUrl; }, 3000); // إرسال للطابعة الثانية بعد 3 ثواني
+         }
+      }
+      
       printed = true;
       showPrintSuccessToast();
       return true;
     } catch(e) {
-      console.warn('RawBT URL Error:', e);
-      try {
-        // الطريقة 2: عبر Android Intent
-        window.location.href = 'intent://print/#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;S.EXTRA_TEXT=' + encodeURIComponent(fullHtml) + ';end';
-        printed = true;
-        showPrintSuccessToast();
-        return true;
-      } catch(e2) {
-        console.warn('RawBT Intent Error:', e2);
-      }
+      console.warn('RawBT Intent Error:', e);
     }
   }
 
   if(printed){
     showPrintSuccessToast();
   } else {
-    toast('الطباعة الصامتة تتطلب تحويل الكود إلى APK — استخدم زر المعاينة','warn');
+    toast('تعذر إرسال الأمر للطابعة، تأكد من إعدادات التطبيق','warn');
   }
   return printed;
 }
@@ -1539,7 +1536,7 @@ function showReceiptPreview(){
   
   showModal(
     '<div class="modal-title">👁 معاينة الوصل</div>' +
-    '<div class="modal-sub">هكذا سيبدو الوصل عند الطباعة (50mm)</div>' +
+    '<div class="modal-sub">هكذا سيبدو الوصل عند الطباعة</div>' +
     '<iframe id="previewFrame" style="width:100%;height:55vh;border:1px solid var(--panel3);border-radius:10px;background:#fff;"></iframe>' +
     '<div class="modal-actions"><button class="btn btn-ghost" id="mClose">إغلاق</button><button class="btn btn-primary" id="mPrint">🖨 طباعة</button></div>',
     box => {
@@ -2164,15 +2161,27 @@ function renderSettings(){
       '<div class="field"><label>تأكيد</label><input type="password" id="newPw2"></div>' +
       '<button class="btn btn-primary btn-block" id="changePwBtn">تغيير كلمة المرور</button>' +
     '</div>' +
-    '<div class="settings-card"><h3>🧾 إعدادات الفاتورة</h3>' +
-      '<div class="field"><label>نص أسفل الفاتورة</label><input type="text" id="setFooter" value="'+esc(st.footer||'')+'"></div>' +
+    '<div class="settings-card"><h3>🖨️ إعدادات الطباعة</h3>' +
+      '<div class="field"><label>نوع الاتصال</label><select id="setPrintMethod">' +
+        '<option value="bluetooth"'+(st.printMethod==='bluetooth'?' selected':'')+'>بلوتوث (لاسلكي)</option>' +
+        '<option value="usb"'+(st.printMethod==='usb'?' selected':'')+'>سلكي (USB / OTG)</option>' +
+      '</select><div style="font-size:10px; color:var(--text-dim); margin-top:4px">تأكد من اختيار نفس النوع في تطبيق RawBT</div></div>' +
+      '<div class="field"><label>عدد الطابعات (الطباعة المزدوجة)</label><select id="setPrinterCount">' +
+        '<option value="1"'+(st.printerCount===1?' selected':'')+'>طابعة واحدة</option>' +
+        '<option value="2"'+(st.printerCount===2?' selected':'')+'>طابعتان (إرسال مزدوج)</option>' +
+      '</select></div>' +
       '<div class="field"><label>عرض ورق الطابعة (mm)</label><select id="setPaperWidth">' +
         '<option value="50"'+((st.paperWidth||50)===50?' selected':'')+'>50mm (افتراضي)</option>' +
         '<option value="58"'+((st.paperWidth||50)===58?' selected':'')+'>58mm</option>' +
         '<option value="80"'+((st.paperWidth||50)===80?' selected':'')+'>80mm (شائع)</option>' +
-        '<option value="76"'+((st.paperWidth||50)===76?' selected':'')+'>76mm</option>' +
       '</select></div>' +
-      '<button class="btn btn-primary btn-block" id="saveReceiptBtn">حفظ</button>' +
+      '<div class="field"><label>حجم النموذج والخط</label><select id="setFontSize">' +
+        '<option value="small"'+(st.fontSize==='small'?' selected':'')+'>صغير (للنصوص الكثيرة)</option>' +
+        '<option value="medium"'+(st.fontSize==='medium'?' selected':'')+'>متوسط (افتراضي)</option>' +
+        '<option value="large"'+(st.fontSize==='large'?' selected':'')+'>كبير (للوضوح العالي)</option>' +
+      '</select></div>' +
+      '<div class="field"><label>نص أسفل الفاتورة</label><input type="text" id="setFooter" value="'+esc(st.footer||'')+'"></div>' +
+      '<button class="btn btn-primary btn-block" id="saveReceiptBtn">حفظ إعدادات الطباعة</button>' +
       '<div style="margin-top:12px;padding:10px;background:rgba(255,107,53,0.08);border-radius:9px;border:1px solid rgba(255,107,53,0.2)">' +
         '<div style="font-size:11px;color:var(--text-dim);font-weight:700;margin-bottom:4px">🔒 معلومات المطوّر (ثابتة)</div>' +
         '<div class="dev-badge">👨‍💻 '+esc(DEV.name)+'</div>' +
@@ -2270,8 +2279,11 @@ function renderSettings(){
   grid.querySelector('#saveReceiptBtn').onclick = () => {
     st.footer = grid.querySelector('#setFooter').value.trim();
     st.paperWidth = parseInt(grid.querySelector('#setPaperWidth').value) || 50;
+    st.printMethod = grid.querySelector('#setPrintMethod').value;
+    st.printerCount = parseInt(grid.querySelector('#setPrinterCount').value) || 1;
+    st.fontSize = grid.querySelector('#setFontSize').value;
     saveState();
-    toast('تم الحفظ','success');
+    toast('تم حفظ إعدادات الطباعة','success');
   };
 
   const expCatsWrap = grid.querySelector('#expCatsWrap');
@@ -2362,9 +2374,12 @@ function renderSettings(){
           if(!Array.isArray(state.expenseCategories) || !state.expenseCategories.length) state.expenseCategories = ['مواد أولية','صيانة','فواتير','أخرى'];
           if(!state.currentReceipt) state.currentReceipt = {number:1,items:[],isEditing:false,editIndex:null};
           if(!state.selection) state.selection = {active:false,itemId:null,input:'',baseQty:0};
-          if(!state.settings) state.settings = { footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50 };
+          if(!state.settings) state.settings = { footer:'شكراً لزيارتكم 🌟', simplifiedPrint:false, paperWidth:50, printMethod:'bluetooth', printerCount:1, fontSize:'medium' };
           if(state.settings.simplifiedPrint === undefined) state.settings.simplifiedPrint = false;
           if(!state.settings.paperWidth) state.settings.paperWidth = 50;
+          if(!state.settings.printMethod) state.settings.printMethod = 'bluetooth';
+          if(!state.settings.printerCount) state.settings.printerCount = 1;
+          if(!state.settings.fontSize) state.settings.fontSize = 'medium';
           if(!state.store) state.store = defaultState().store;
           state.currentEmployeeId = null;
           saveState(); renderAll(); updateTopbar(); showLogin();
